@@ -45,4 +45,75 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to expenses_url
   end
+
+  # Date filtering tests
+  test "should filter expenses by start date" do
+    get expenses_url, params: { start_date: "2025-10-24" }
+    assert_response :success
+
+    # Should include lunch description but not movie description
+    assert_match "Lunch at local cafe", response.body
+    assert_no_match "Movie ticket", response.body
+
+    # Should include filter value in form
+    assert_match 'value="2025-10-24"', response.body
+  end
+
+  test "should filter expenses by end date" do
+    get expenses_url, params: { end_date: "2025-10-23" }
+    assert_response :success
+
+    # Should include gas and movie but not lunch
+    assert_match "Gas fill-up", response.body
+    assert_match "Movie ticket", response.body
+    assert_no_match "Lunch at local cafe", response.body
+
+    # Should include filter value in form
+    assert_match 'value="2025-10-23"', response.body
+  end
+
+  test "should filter expenses by date range" do
+    get expenses_url, params: { start_date: "2025-10-23", end_date: "2025-10-24" }
+    assert_response :success
+
+    # Should include lunch and gas but not movie
+    assert_match "Lunch at local cafe", response.body
+    assert_match "Gas fill-up", response.body
+    assert_no_match "Movie ticket", response.body
+
+    # Should include both filter values in form
+    assert_match 'value="2025-10-23"', response.body
+    assert_match 'value="2025-10-24"', response.body
+  end
+
+  test "should return all expenses when no date filters provided" do
+    get expenses_url
+    assert_response :success
+
+    # Should include all expenses
+    assert_match "Lunch at local cafe", response.body
+    assert_match "Gas fill-up", response.body
+    assert_match "Movie ticket", response.body
+
+    # Should not show Clear Filters link
+    assert_no_match "Clear Filters", response.body
+  end
+
+  test "should handle empty date filter parameters" do
+    get expenses_url, params: { start_date: "", end_date: "" }
+    assert_response :success
+
+    # Should include all expenses when params are empty strings
+    assert_match "Lunch at local cafe", response.body
+    assert_match "Gas fill-up", response.body
+    assert_match "Movie ticket", response.body
+  end
+
+  test "should show clear filters link when filters are active" do
+    get expenses_url, params: { start_date: "2025-10-24" }
+    assert_response :success
+
+    # Should show Clear Filters link when filter is applied
+    assert_match "Clear Filters", response.body
+  end
 end

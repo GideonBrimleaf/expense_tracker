@@ -7,6 +7,25 @@
   <%= link_to "New Expense", new_expense_path %>
 </nav>
 
+<!-- Filter Form -->
+<div class="expense-filters">
+  <%= form_with url: expenses_path, method: :get, local: true do |form| %>
+    <div class="filter-row">
+      <%= form.label :start_date, "From:" %>
+      <%= form.date_field :start_date, value: @start_date %>
+      
+      <%= form.label :end_date, "To:" %>
+      <%= form.date_field :end_date, value: @end_date %>
+      
+      <%= form.submit "Filter" %>
+      
+      <% if @start_date.present? || @end_date.present? %>
+        <%= link_to "Clear Filters", expenses_path %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
 <h1>Expenses</h1>
 
 <div id="expenses">

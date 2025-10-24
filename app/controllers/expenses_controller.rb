@@ -3,7 +3,22 @@ class ExpensesController < ApplicationController
 
   # GET /expenses or /expenses.json
   def index
-    @expenses = Expense.all
+    @expenses = Expense.includes(:category)
+
+    # Apply date range filtering
+    if params[:start_date].present?
+      @expenses = @expenses.where("date >= ?", params[:start_date])
+    end
+
+    if params[:end_date].present?
+      @expenses = @expenses.where("date <= ?", params[:end_date])
+    end
+
+    @expenses = @expenses.order(date: :desc)
+
+    # Store filter params for form persistence
+    @start_date = params[:start_date]
+    @end_date = params[:end_date]
   end
 
   # GET /expenses/1 or /expenses/1.json
