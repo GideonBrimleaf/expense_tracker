@@ -1,7 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
+import { Chart, registerables } from "chart.js"
+
+// Register Chart.js components
+Chart.register(...registerables)
 
 // Connects to data-controller="chart"
-// Uses global Chart.js loaded via script tag
 export default class extends Controller {
   static values = { 
     labels: Array,
@@ -12,34 +15,7 @@ export default class extends Controller {
 
   connect() {
     this.currentMode = "count"
-    this.attempts = 0
-    
-    // Wait for Chart.js to load, then initialize
-    this.waitForChart()
-  }
 
-  waitForChart() {
-    this.attempts += 1
-    
-    if (typeof Chart !== 'undefined') {
-      this.initializeChartWhenReady()
-    } else if (this.attempts < 50) { // Max 5 seconds
-      // Check again in 100ms
-      setTimeout(() => this.waitForChart(), 100)
-    } else {
-      console.error("Chart.js failed to load after 5 seconds")
-      this.showChartError()
-    }
-  }
-
-  initializeChartWhenReady() {
-    console.log("Chart.js version:", Chart.version)
-    console.log("Chart data:", { 
-      labels: this.labelsValue, 
-      counts: this.countDataValue, 
-      amounts: this.amountDataValue 
-    })
-    
     try {
       this.initializeChart()
       this.updateButtonStates()
