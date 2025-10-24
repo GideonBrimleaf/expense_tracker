@@ -69,3 +69,25 @@
   align-items: center;
   flex-wrap: wrap;
 }
+
+.export-controls {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.export-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.export-btn:hover {
+  background-color: #218838;
+  color: white;
+}

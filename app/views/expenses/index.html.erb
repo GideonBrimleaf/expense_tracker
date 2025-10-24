@@ -26,6 +26,16 @@
       <% end %>
     </div>
   <% end %>
+  
+  <!-- CSV Export -->
+  <% if @expenses.any? %>
+    <div class="export-controls">
+      <%= link_to "Export to CSV", 
+          expenses_path(format: :csv, start_date: @start_date, end_date: @end_date),
+          class: "export-btn",
+          data: { turbo: false } %>
+    </div>
+  <% end %>
 </div>
 
 <!-- Chart Section -->

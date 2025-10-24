@@ -22,6 +22,12 @@ class ExpensesController < ApplicationController
 
     # Prepare chart data for the filtered expenses
     @chart_data = prepare_chart_data(@expenses)
+
+    # Handle CSV export format
+    respond_to do |format|
+      format.html # Default HTML response
+      format.csv { export_to_csv(@expenses) }
+    end
   end
 
   # GET /expenses/1 or /expenses/1.json
@@ -101,5 +107,48 @@ class ExpensesController < ApplicationController
         count_data: category_counts.values,
         amount_data: category_amounts.values.map(&:to_f)
       }
+    end
+
+    # Export expenses to CSV format
+    def export_to_csv(expenses)
+      require "csv"
+
+      # Generate filename with date range if applicable
+      filename = generate_csv_filename
+
+      csv_data = CSV.generate(headers: true) do |csv|
+        # Add header row
+        csv << [ "Date", "Category", "Amount", "Description" ]
+
+        # Add data rows
+        expenses.includes(:category).each do |expense|
+          csv << [
+            expense.date.strftime("%Y-%m-%d"),
+            expense.category.name,
+            expense.amount.to_f,
+            expense.description
+          ]
+        end
+      end
+
+      send_data csv_data,
+                filename: filename,
+                type: "text/csv",
+                disposition: "attachment"
+    end
+
+    # Generate appropriate filename based on filters
+    def generate_csv_filename
+      base_name = "expenses"
+
+      if @start_date.present? && @end_date.present?
+        "#{base_name}_#{@start_date}_to_#{@end_date}.csv"
+      elsif @start_date.present?
+        "#{base_name}_from_#{@start_date}.csv"
+      elsif @end_date.present?
+        "#{base_name}_until_#{@end_date}.csv"
+      else
+        "#{base_name}_#{Date.current.strftime('%Y-%m-%d')}.csv"
+      end
     end
 end

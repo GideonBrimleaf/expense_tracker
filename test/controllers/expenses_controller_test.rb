@@ -116,4 +116,64 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
     # Should show Clear Filters link when filter is applied
     assert_match "Clear Filters", response.body
   end
+
+  # CSV Export tests
+  test "should export all expenses to CSV" do
+    get expenses_url(format: :csv)
+    assert_response :success
+    assert_equal "text/csv", response.content_type
+    assert_match "attachment", response.headers["Content-Disposition"]
+    assert_match "expenses_", response.headers["Content-Disposition"]
+
+    # Check CSV content structure
+    csv_lines = response.body.split("\n")
+    assert_equal "Date,Category,Amount,Description", csv_lines.first
+    assert_equal 4, csv_lines.length # Header + 3 expenses
+
+    # Check for expense data in CSV
+    assert_match "2025-10-24,Food & Dining,12.5,Lunch at local cafe", response.body
+    assert_match "2025-10-23,Transportation,45.0,Gas fill-up", response.body
+    assert_match "2025-10-22,Entertainment,15.0,Movie ticket", response.body
+  end
+
+  test "should export filtered expenses to CSV with date range in filename" do
+    get expenses_url(format: :csv, start_date: "2025-10-24", end_date: "2025-10-24")
+    assert_response :success
+    assert_equal "text/csv", response.content_type
+
+    # Check filename includes date range
+    assert_match "expenses_2025-10-24_to_2025-10-24.csv", response.headers["Content-Disposition"]
+
+    # Check CSV contains only filtered data
+    csv_lines = response.body.split("\n")
+    assert_equal 2, csv_lines.length # Header + 1 expense
+    assert_match "2025-10-24,Food & Dining,12.5,Lunch at local cafe", response.body
+    assert_no_match "Gas fill-up", response.body
+  end
+
+  test "should export filtered expenses with start date only" do
+    get expenses_url(format: :csv, start_date: "2025-10-23")
+    assert_response :success
+
+    # Check filename includes start date
+    assert_match "expenses_from_2025-10-23.csv", response.headers["Content-Disposition"]
+
+    # Should include lunch and gas but not movie
+    assert_match "Food & Dining", response.body
+    assert_match "Transportation", response.body
+    assert_no_match "Entertainment", response.body
+  end
+
+  test "should export filtered expenses with end date only" do
+    get expenses_url(format: :csv, end_date: "2025-10-23")
+    assert_response :success
+
+    # Check filename includes end date
+    assert_match "expenses_until_2025-10-23.csv", response.headers["Content-Disposition"]
+
+    # Should include gas and movie but not lunch
+    assert_match "Transportation", response.body
+    assert_match "Entertainment", response.body
+    assert_no_match "Food & Dining", response.body
+  end
 end

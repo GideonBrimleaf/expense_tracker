@@ -170,4 +170,25 @@ class ExpensesTest < ApplicationSystemTestCase
     # Canvas should exist (but may not be visible due to Chart.js loading)
     assert_selector "canvas", visible: false
   end
+
+  test "should display CSV export button when expenses exist" do
+    visit expenses_url
+
+    # Export button should be visible when there are expenses
+    assert_link "Export to CSV"
+
+    # Export button should be in the export controls section
+    assert_selector ".export-controls"
+  end
+
+  test "should not display CSV export button when no expenses exist" do
+    # Remove all expenses to test empty state
+    Expense.delete_all
+
+    visit expenses_url
+
+    # Export button should not be visible when there are no expenses
+    assert_no_link "Export to CSV"
+    assert_no_selector ".export-controls"
+  end
 end
