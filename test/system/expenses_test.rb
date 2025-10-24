@@ -59,7 +59,7 @@ class ExpensesTest < ApplicationSystemTestCase
     page.execute_script("document.getElementById('start_date').value = '2025-10-24'")
     page.execute_script("document.getElementById('end_date').value = '2025-10-24'")
     click_on "Filter"
-    
+
     # Should show only the lunch expense
     assert_text "Lunch at local cafe"
     assert_no_text "Gas fill-up"
@@ -152,5 +152,22 @@ class ExpensesTest < ApplicationSystemTestCase
     assert_field "start_date", with: "2025-01-01"
     assert_field "end_date", with: "2025-01-01"
     assert_link "Clear Filters"
+  end
+
+  test "should display expense chart section" do
+    visit expenses_url
+
+    # Chart section should be present when there are expenses
+    assert_selector ".chart-section"
+
+    # Toggle buttons should be present
+    assert_button "Count"
+    assert_button "Amount ($)"
+
+    # Chart should have data attributes
+    assert_selector "[data-controller='chart']"
+
+    # Canvas should exist (but may not be visible due to Chart.js loading)
+    assert_selector "canvas", visible: false
   end
 end

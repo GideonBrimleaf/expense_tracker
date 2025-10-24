@@ -7,6 +7,8 @@
   <%= link_to "New Expense", new_expense_path %>
 </nav>
 
+<h1>Expenses</h1>
+
 <!-- Filter Form -->
 <div class="expense-filters">
   <%= form_with url: expenses_path, method: :get, local: true do |form| %>
@@ -26,7 +28,31 @@
   <% end %>
 </div>
 
-<h1>Expenses</h1>
+<!-- Chart Section -->
+<% if @expenses.any? %>
+  <div class="chart-section" 
+       data-controller="chart"
+       data-chart-labels-value="<%= @chart_data[:labels].to_json %>"
+       data-chart-count-data-value="<%= @chart_data[:count_data].to_json %>"
+       data-chart-amount-data-value="<%= @chart_data[:amount_data].to_json %>">
+    
+    <div class="chart-controls">
+      <button data-chart-target="countButton" data-action="click->chart#toggleToCount" class="active">
+        Count
+      </button>
+      <button data-chart-target="amountButton" data-action="click->chart#toggleToAmount">
+        Amount ($)
+      </button>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-loading" style="text-align: center; padding: 2rem; color: #666;">
+        Loading chart...
+      </div>
+      <canvas data-chart-target="canvas" style="display: none;"></canvas>
+    </div>
+  </div>
+<% end %>
 
 <div id="expenses">
   <% @expenses.each do |expense| %>

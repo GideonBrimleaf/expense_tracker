@@ -19,6 +19,9 @@ class ExpensesController < ApplicationController
     # Store filter params for form persistence
     @start_date = params[:start_date]
     @end_date = params[:end_date]
+
+    # Prepare chart data for the filtered expenses
+    @chart_data = prepare_chart_data(@expenses)
   end
 
   # GET /expenses/1 or /expenses/1.json
@@ -81,5 +84,22 @@ class ExpensesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def expense_params
       params.expect(expense: [ :amount, :category_id, :date, :description ])
+    end
+
+    # Prepare chart data for pie chart visualization
+    def prepare_chart_data(expenses)
+      # Group by category and calculate counts and amounts
+      category_counts = expenses.joins(:category).group("categories.name").count
+      category_amounts = expenses.joins(:category).group("categories.name").sum(:amount)
+
+      # Extract labels (category names)
+      labels = category_counts.keys
+
+      # Return structured data for Chart.js
+      {
+        labels: labels,
+        count_data: category_counts.values,
+        amount_data: category_amounts.values.map(&:to_f)
+      }
     end
 end
