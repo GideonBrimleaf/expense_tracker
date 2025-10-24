@@ -10,13 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_24_083608) do
-  create_table "expenses", force: :cascade do |t|
-    t.decimal "amount"
-    t.string "category"
-    t.date "date"
+ActiveRecord::Schema[8.0].define(version: 2025_10_24_091521) do
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "expenses", force: :cascade do |t|
+    t.decimal "amount"
+    t.date "date"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "category_id"
+    t.index ["category_id"], name: "index_expenses_on_category_id"
+  end
+
+  add_foreign_key "expenses", "categories"
 end

@@ -2,7 +2,7 @@ require "application_system_test_case"
 
 class ExpensesTest < ApplicationSystemTestCase
   setup do
-    @expense = expenses(:one)
+    @expense = expenses(:lunch)
   end
 
   test "visiting the index" do
@@ -12,10 +12,10 @@ class ExpensesTest < ApplicationSystemTestCase
 
   test "should create expense" do
     visit expenses_url
-    click_on "New expense"
+    click_on "New Expense"
 
     fill_in "Amount", with: @expense.amount
-    fill_in "Category", with: @expense.category
+    select @expense.category.name, from: "Category"
     fill_in "Date", with: @expense.date
     fill_in "Description", with: @expense.description
     click_on "Create Expense"
@@ -29,7 +29,7 @@ class ExpensesTest < ApplicationSystemTestCase
     click_on "Edit this expense", match: :first
 
     fill_in "Amount", with: @expense.amount
-    fill_in "Category", with: @expense.category
+    select @expense.category.name, from: "Category"
     fill_in "Date", with: @expense.date
     fill_in "Description", with: @expense.description
     click_on "Update Expense"

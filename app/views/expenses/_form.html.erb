@@ -17,8 +17,8 @@
   </div>
 
   <div>
-    <%= form.label :category, style: "display: block" %>
-    <%= form.text_field :category %>
+    <%= form.label :category_id, "Category", style: "display: block" %>
+    <%= form.collection_select :category_id, Category.all, :id, :name, { prompt: "Select a category" }, { style: "display: block" } %>
   </div>
 
   <div>

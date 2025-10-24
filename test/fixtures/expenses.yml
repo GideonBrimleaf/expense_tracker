@@ -1,13 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  amount: 9.99
-  category: MyString
+lunch:
+  amount: 12.50
+  category: food
   date: 2025-10-24
-  description: MyText
+  description: Lunch at local cafe
 
-two:
-  amount: 9.99
-  category: MyString
-  date: 2025-10-24
-  description: MyText
+gas:
+  amount: 45.00
+  category: transportation
+  date: 2025-10-23
+  description: Gas fill-up
+
+movie:
+  amount: 15.00
+  category: entertainment
+  date: 2025-10-22
+  description: Movie ticket

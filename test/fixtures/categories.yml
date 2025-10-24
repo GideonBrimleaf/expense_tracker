@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+food:
+  name: Food & Dining
+  description: Expenses for meals, groceries, and dining out
+
+transportation:
+  name: Transportation
+  description: Car, gas, public transit, and travel expenses
+
+entertainment:
+  name: Entertainment
+  description: Movies, games, and recreational activities

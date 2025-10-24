@@ -1,0 +1,24 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @category %>
+
+<div>
+  <%= link_to "Edit this category", edit_category_path(@category) %> |
+  <%= link_to "Back to categories", categories_path %>
+
+  <%= button_to "Destroy this category", @category, method: :delete %>
+</div>
+
+<% if @category.expenses.any? %>
+  <h3>Expenses in this category:</h3>
+  <div id="category_expenses">
+    <% @category.expenses.each do |expense| %>
+      <%= render expense %>
+      <p>
+        <%= link_to "Show this expense", expense %>
+      </p>
+    <% end %>
+  </div>
+<% else %>
+  <p>No expenses in this category yet.</p>
+<% end %>
